@@ -1,0 +1,106 @@
+<html>
+	<head>
+		<title>Test Suite</title>
+		<script type="text/javascript">
+
+			/**
+			 * plan:
+			 * - tests that reliy on the same async call must be grouped togheter
+			 * - a test group must be completed before the next one can be execute
+			 *   and they must be placed on a que
+			*/
+
+
+			(function() {
+				var results;
+				var queue = [];
+				var paused = false;
+				this.assert = function(value, desc) {
+					var li = document.createElement("li");
+					li.className = value ? "pass" : "fail";
+					li.appendChild(document.createTextNode(desc));
+					results.appendChild(li);
+					if (!value) {
+						results.parentNode.className = "fail";
+						//li.parentNode.parentNode.className = "fail";
+					}					
+					return li;
+				}
+
+				/**
+				 * take a function that contains the tests to be executed and 
+				 * places it in the queue. 
+				*/ 
+				this.test = function(name, fn) {
+					queue.push(function() {
+						results = document.getElementById("results");
+						results = assert(true, name).appendChild(
+							document.createElement("ul"));
+						pause();
+						fn();
+						
+					});
+
+					runTest();			
+				};
+
+				/**
+				 * tells the test group executed should be paused until all 
+				 * tests are done.
+				*/
+				this.pause = function() {
+					paused = true;
+				};
+
+				/**
+				 * resume execution after a short delay to avoid long running 
+				 * test blocks. The resume function is the callback that must be
+				 * used in the asyncronous call.
+				*/
+				this.resume = function() {
+					paused = false;
+					setTimeout(runTest, 1);
+				};
+
+				/**
+				 * private function runTest execute the tests
+				*/
+				function runTest() {
+					if (!paused && queue.length) {						
+						queue.shift()();													
+					}
+				}; 
+
+			})();
+			
+
+			window.onload = function() {
+				test("A test.", function() {					
+					setTimeout(function() {
+						assert(true, "Async test 1");
+						resume();
+					}, 1000);
+				});
+				test("B test.", function() {					
+					setTimeout(function() {
+						assert(true, "Async test 2");
+						resume();
+					}, 1000);
+				});			
+			}
+		</script>
+		<style type="text/css">
+			.pass {
+				color: green;
+			}
+			.fail {
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<ul id="results">
+		
+		</ul>
+	</body>
+</html>
