@@ -2,16 +2,45 @@
 	<head>
 		<title>Test Suite</title>
 		<script type="text/javascript">
-			function assert(value, desc) {
-				var li = document.createElement("li");
-				li.className = value ? "pass" : "fail";
-				li.appendChild(document.createTextNode(desc));
-				document.getElementById("results").appendChild(li);
-			}
 
-			window.onload = function () {
-				assert(true, "the test suite is running");
-				assert(false, "this is an error");
+			(function() {
+				var results;
+				this.assert = function(value, desc) {
+					var li = document.createElement("li");
+					li.className = value ? "pass" : "fail";
+					li.appendChild(document.createTextNode(desc));
+					results.appendChild(li);
+					if (!value) {
+						results.parentNode.className = "fail";
+						//li.parentNode.parentNode.className = "fail";
+					}					
+					return li;
+				}
+				this.test = function(name, fn) {
+					results = document.getElementById("results");
+					results = assert(true, name).appendChild(
+						document.createElement("ul"));
+					fn();
+				}
+
+			})();
+			
+
+			window.onload = function() {
+				test("A test.", function() {
+					assert(true, "the first test group is running");
+					assert(true, "the second test into first");	
+					assert(true, "the third into first");
+				});
+				test("B test.", function() {
+					assert(true, "Positive");
+					assert(false, "Negative");
+					assert(true, "reachable?");
+				});
+				test("C test.", function() {
+					assert(null, "fail");
+					assert(4, "pass");
+				});				
 			}
 		</script>
 		<style type="text/css">
