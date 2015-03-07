@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Listing 3.4</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="../scripts/assert.js"></script>
+    <link href="../styles/assert.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <script type="text/javascript">
+    function Ninja() {
+    	this.skulk = function() { return this; };
+    }
+
+    var ninja1 = new Ninja();
+    assert(ninja1.skulk() === ninja1, "a ninja skulking himself");
+
+    var whatever = Ninja();
+    assert(typeof window.skulk === 'function', "skulking in the window");
+    assert(typeof whatever === 'undefined', "whatever is undefined");
+    </script>
+  </body>
+</function>
