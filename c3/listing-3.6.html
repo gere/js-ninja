@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Listing 3.6</title>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="../scripts/assert.js"></script>
+    <link href="../styles/assert.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <script>
+    	/**
+    	 * added some of the functionality suggested as an exercise:
+    	 * - you can pass any additional arguments to the foreach that will be used
+    	 *   as arguments for the callback
+    	 * - the collection can be an array | object | string
+    	 * - it's possible to break the loop returning explcitly false with the callback
+    	*/
+    	function forEach(collection, callback) {    	  
+    	  for (key in collection) {
+    	  	if (!collection.hasOwnProperty(key)) {
+    	  		continue;
+    	  	}
+    	  	args = [key];
+    	  	index = 1;
+    	  	if (arguments.length > index) {    	  		
+    	  		while (++index < arguments.length) {
+    	  			args.push(arguments[index]);
+    	  		}
+    	  	}
+    	  	if (callback.apply(collection[key], args) === false) {
+    	  		break;
+    	  	}
+    	  }
+    	}
+    	
+    	var weapons = ["a", 'b', 'c'];    	
+    	forEach(weapons, function(key) {  
+    		if (weapons[key] === 'b') {
+    			return false;
+    		}  				
+    		assert(this == weapons[key], "this is a weapon");
+    	});
+
+    	var ninja1 = {a: 0, b: 1};  
+    	var TO_ADD = 5;  	
+    	var TO_ADD2 = 3;
+    	var TO_ADD3 = 7;
+    	forEach(ninja1, function(key) {    		
+    		assert(this == ninja1[key], "this is a ninja property");
+    		assert((this + TO_ADD) === this + arguments[1], "added some fire "  );
+    		assert((this + TO_ADD + TO_ADD2) === this + arguments[1] + arguments[2], "added some fire "  );
+    		assert((this + TO_ADD + TO_ADD2 + TO_ADD3) === this + arguments[1] + arguments[2] + arguments[3], "added some fire "  );
+    	}, TO_ADD, TO_ADD2, TO_ADD3);
+
+    	var string = "ninja text";    	
+    	forEach(string, function(key) {
+    		assert(this == string[key], "this is a string character");
+    	});
+    </script>
+  </body>
+</function>
